@@ -53,8 +53,8 @@ const TOKEN_TYPES = [
   {comma: /,/},
 
   // Comments
-  {slinecom: /\/\/.*\n/},
-  {mlinecom: /\/\*(?:.|\n)*\*\//},
+  {slinecom: /\/\/.*/},
+  {mlinecom: /\/\*(?:.|\n)*?\*\//},
 
   // Operators
 
@@ -105,6 +105,10 @@ const TOKEN_TYPES = [
   {ochevron: /</},
   {cchevron: />/},
 
+  // Strings and characters
+  {string: /"(?:\\\n|.)*?"/},
+  {character: /'(?:.|\\[abfnrtv'"?0\\]|\\[0-7]{3}|\\x[0-9a-fA-F]{2})'/},
+
   {wspace: /\s/},
 ];
 
@@ -142,6 +146,9 @@ class Tokenizer {
           this.cursor.col += match[0].length;
         }
 
+        if(type == 'string'){
+          match[0] = match[0].replace(/\\\n/g, '');
+        }
 
         return ({type: type, value: match[0]});
       }

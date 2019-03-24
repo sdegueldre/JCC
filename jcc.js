@@ -106,7 +106,7 @@ const TOKEN_TYPES = [
   {cchevron: />/},
 
   // Strings and characters
-  {string: /"(?:\\\n|.)*?"/},
+  {string: /"(?:\\\n|\\"|.)*?(?:[^\\])"/},
   {character: /'(?:.|\\[abfnrtv'"?0\\]|\\[0-7]{3}|\\x[0-9a-fA-F]{2})'/},
 
   {wspace: /\s/},
@@ -134,11 +134,13 @@ class Tokenizer {
         // Remove matched code
         this.code = this.code.substring(match[0].length);
 
-        // Adjust cursor
+        // Adjust error cursor
         if(type == 'mlinecom'){
           let lines = match[0].split('\n')
           this.cursor.line += lines.length - 1;
-          this.cursor.col = lines[lines.length-1].length+1;
+          if(lines.length != 1)
+            this.cursor.col = 1;
+          this.cursor.col += lines[lines.length-1].length;
         } else if(match[0] == '\n'){
           this.cursor.line++;
           this.cursor.col = 1;
@@ -146,16 +148,12 @@ class Tokenizer {
           this.cursor.col += match[0].length;
         }
 
-        if(type == 'string'){
-          match[0] = match[0].replace(/\\\n/g, '');
-        }
-
         return ({type: type, value: match[0]});
       }
     }
     console.log(this.tokens);
     let lastLine = code.split('\n')[this.cursor.line-1];
-    let cursorLine = lastLine.replace(/[^\t]/g, ' ').substring(0, this.cursor.col-1)+'^';
+    let cursorLine = lastLine.substring(0, this.cursor.col-1).replace(/[^\t]/g, ' ')+'^';
     console.log({x: lastLine, y: cursorLine});
     throw `Couldn't match token at ${filePath}:${this.cursor.line}:${this.cursor.col}\n${lastLine}\n${cursorLine}`;
   }

@@ -8,7 +8,11 @@ int ext4_inode_bitmap_csum_verify(struct super_block *sb, ext4_group_t group,
 				  struct ext4_group_desc *gdp,
 
 					/* some other comment */
-					'\777', "a string that \
-does stuff maybe? $"
+					'\xFF', "a string that \
+does stuff maybe? $\""
 				  struct buffer_head *bh, int sz)
 {
+
+int array[] = {5, 7, 8 ,12};
+
+int func(int array[5][4]) == int func(int *array[5])

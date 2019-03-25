@@ -181,6 +181,37 @@ class Parser {
 let tokenizer = new Tokenizer(code);
 let tokens = tokenizer.tokenize();
 for(let token of tokens){
-  if(token.type != 'wspace')
+  if(token.type == 'string' || token.type == 'character'){
     console.log(token.value);
+    console.log(unescapeString(token.value));
+  }
+}
+
+function unescapeString(string){
+  const escapeSequences = [
+    {esc: /\\a/g, char: '\a'},
+    {esc: /\\b/g, char: '\b'},
+    {esc: /\\f/g, char: '\f'},
+    {esc: /\\\n/g, char: '\n'},
+    {esc: /\\r/g, char: '\r'},
+    {esc: /\\t/g, char: '\t'},
+    {esc: /\\v/g, char: '\v'},
+    {esc: /\\"/g, char: '"'},
+    {esc: /\\'/g, char: "'"},
+    {esc: /\\\?/g, char: '?'},
+    {esc: /\\0/g, char: '\0'},
+    {esc: /\\\\/g, char: '\\'},
+    {esc: /\\x([0-9a-fA-F]{2})/g, char: '0x$1'},
+    {esc: /\\([0-7]{3})/g, char: '0$1'},
+  ];
+  for(let sequence of escapeSequences){
+    if(sequence.char == '0x$1'){
+      string = string.replace(sequence.esc, (match, p1) => String.fromCharCode(parseInt(p1, 16)));
+    } else if(sequence.char == '0$1'){
+      string = string.replace(sequence.esc, (match, p1) => String.fromCharCode(parseInt(p1, 8)));
+    } else {
+      string = string.replace(sequence.esc, sequence.char);
+    }
+  }
+  return string;
 }

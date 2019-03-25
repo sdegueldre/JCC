@@ -8,7 +8,7 @@ int ext4_inode_bitmap_csum_verify(struct super_block *sb, ext4_group_t group,
 				  struct ext4_group_desc *gdp,
 
 					/* some other comment */
-					'\xFF', "a string that \
+					'\123', "a \111, \x21 string that \
 does stuff maybe? $\""
 				  struct buffer_head *bh, int sz)
 {

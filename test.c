@@ -1,4 +1,4 @@
-unsigned int ext4_count_free(char *bitmap, unsigned int numchars)
+unsigned long int **ext4_count_free(char *bitmap, unsigned int numchars)
 {
 	return numchars * BITS_PER_BYTE - memweight(bitmap, numchars);
 	/* some comment */
